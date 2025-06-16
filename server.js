@@ -1,45 +1,23 @@
-const dotenv = require('dotenv');
-dotenv.config();  // <--- Add this line
+const dotenv = require("dotenv");
+dotenv.config();
 
 const express = require("express");
-const axios = require("axios");
+const connectDB = require("./config/DbConnection");  // DB connection
+const weatherRoutes = require("./routes/weather");  // Routes
+
 const app = express();
 
+// Connect to MongoDB
+connectDB();
 
-// Set the view engine to EJS
+// Set view engine and static
 app.set("view engine", "ejs");
-
-// Serve the public folder as static files
 app.use(express.static("public"));
 
-// Render the index template with default values for weather and error
-app.get("/", (req, res) => {
-  res.render("index", { weather: null, error: null });
-});
+// Use weather routes
+app.use("/", weatherRoutes);
 
-// Handle the /weather route
-app.get("/weather", async (req, res) => {
-  // Get the city from the query parameters
-  const city = req.query.city; 
-  const apiKey= process.env.APIKey;
-  const APIUrl = `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`;
-
-  let weather;
-  let error = null;
-  try {
-    const response = await axios.get(APIUrl);
-    weather = response.data;
-	console.log("weather data: ",weather);
-  } catch (error) {
-    weather = null;
-    error = "Error, Please try again";
-  }
-  // Render the index template with the weather data and error message
-  res.render("index", { weather, error });
-});
-
-// Start the server and listen on port 3000 or the value of the PORT environment variable
 const port = process.env.PORT || 3000;
 app.listen(port, () => {
-  console.log(`App is running on port ${port}`);
+  console.log(`🚀 Server running on port ${port}`);
 });
