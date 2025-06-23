@@ -1,6 +1,7 @@
 const express = require("express");
 const axios = require("axios");
 const Weather = require("../models/weatherDataModel");
+const mongoose = require('mongoose');
 
 const router = express.Router();
 
@@ -40,6 +41,27 @@ router.get("/weather", async (req, res) => {
 
   res.render("index", { weather, error });
 
+});
+
+
+//router.get('/health', (req, res) => {
+  //res.status(200).send('OK');
+//});
+
+router.get('/health', async (req, res) => {
+  const mongoState = mongoose.connection.readyState;
+
+  if (mongoState !== 1) {
+    return res.status(500).json({
+      status: 'Unhealthy',
+      mongoStatus: mongoState,
+    });
+  }
+
+  res.status(200).json({
+    status: 'OK',
+    mongoStatus: mongoState,
+  });
 });
 
 module.exports = router;
