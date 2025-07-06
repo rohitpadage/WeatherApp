@@ -25,10 +25,8 @@ pipeline {
         }
 
         stage('Deploy to Render') {
-            steps {
-                script {
-                    sh "curl -X POST $RENDER_DEPLOY_HOOK"
-                }
+            steps { 
+                    sh 'curl -X POST "$RENDER_DEPLOY_HOOK"'
             }
         }
 
