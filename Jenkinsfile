@@ -7,6 +7,7 @@ pipeline {
         APIKey= credentials('APIKey')
         MONGODB_URI= credentials('MONGODB_URI')
         PORT=3000
+        RENDER_DEPLOY_HOOK = credentials('render-hook')
     }
 
     stages {
@@ -20,6 +21,14 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'npm run ci'
+            }
+        }
+
+        stage('Deploy to Render') {
+            steps {
+                script {
+                    sh "curl -X POST $RENDER_DEPLOY_HOOK"
+                }
             }
         }
 
