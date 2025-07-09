@@ -8,7 +8,7 @@ pipeline {
         MONGODB_URI= credentials('MONGODB_URI')
         PORT=3000
 
-        IMAGE_NAME = 'rohitpadage09/weather-app'
+        IMAGE_NAME = 'smart-weather-app'
         DOCKER_USERNAME = credentials('dockerhub-username')  // Jenkins Secret Text
         DOCKER_PASSWORD = credentials('dockerhub-password')  // Jenkins Secret Text
         RENDER_DEPLOY_HOOK = credentials('render-hook')
@@ -31,7 +31,8 @@ pipeline {
         stage('Build Docker Image') {
             steps {
                 script {
-                    docker.build("${IMAGE_NAME}:latest")
+                    def imageTag = "${DOCKER_USERNAME}/${IMAGE_NAME}:latest"
+                    docker.build(imageTag)
                 }
             }
         }
@@ -39,8 +40,9 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
         sh '''
-            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
-            docker push "$DOCKER_USERNAME"/weather-app:latest
+            def imageTag = "${DOCKER_USERNAME}/${IMAGE_NAME}:latest"
+            echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+            docker push ${imageTag}
         '''
     }
         }
