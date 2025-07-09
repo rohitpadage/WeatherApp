@@ -9,7 +9,8 @@ pipeline {
         PORT=3000
 
         IMAGE_NAME = 'rohitpadage09/weather-app'
-        DOCKER_CREDENTIALS_ID = 'dockerhub-creds'
+        DOCKER_USERNAME = credentials('dockerhub-username')  // Jenkins Secret Text
+        DOCKER_PASSWORD = credentials('dockerhub-password')  // Jenkins Secret Text
         RENDER_DEPLOY_HOOK = credentials('render-hook')
     }
 
@@ -37,12 +38,11 @@ pipeline {
 
         stage('Push to DockerHub') {
             steps {
-                script {
-                    docker.withRegistry('https://index.docker.io/v1/', "${DOCKER_CREDENTIALS_ID}") {
-                        docker.image("${IMAGE_NAME}:latest").push()
-                    }
-                }
-            }
+        sh '''
+            echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+            docker push "$DOCKER_USERNAME"/weather-app:latest
+        '''
+    }
         }
 
         stage('Deploy to Render') {
