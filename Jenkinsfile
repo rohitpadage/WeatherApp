@@ -28,6 +28,16 @@ pipeline {
             }
         }
 
+        stage('Login to DockerHub') {
+        steps {
+            script {
+                sh """
+                    echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
+                """
+            }
+        }
+    }
+
         stage('Build Docker Image') {
             steps {
                 script {
@@ -40,9 +50,7 @@ pipeline {
         stage('Push to DockerHub') {
             steps {
         sh '''
-            def imageTag = "${DOCKER_USERNAME}/${IMAGE_NAME}:latest"
-            echo "${DOCKER_PASSWORD}" | docker login -u "${DOCKER_USERNAME}" --password-stdin
-            docker push ${imageTag}
+            docker push "$DOCKER_USERNAME/smart-weather-app:latest"
         '''
     }
         }
