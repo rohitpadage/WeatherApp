@@ -10,31 +10,34 @@
   </head>
   <body>
     <div class="container">
-      <h1>Smart Weather App</h1>
-      <form action="/weather" method="get">
-        <input type="text" name="city" placeholder="Enter city name" />
-        <button type="submit">Get Weather</button>
+      <h1 id="app-title">Smart Weather App</h1>
+      <form action="/weather" method="get" id="weather-form">
+        <input type="text" name="city" placeholder="Enter city name" id="city-input" />
+        <button type="submit" id="get-weather-btn">Get Weather</button>
       </form>
+
       <% if (error) { %>
-      <p class="error"><%= error %></p>
+        <p class="error" id="weather-error"><%= error %></p>
       <% } else if (weather) { %>
-      <div class="card">
-        <!-- Add your weather data here -->
-		<p>
-  <i class="fas fa-thermometer-half"></i>
-  <%= weather.main.temp %>&deg;C
-</p>
+        <div class="card" id="weather-card">
+          <!-- Temperature -->
+          <p id="weather-temp">
+            <i class="fas fa-thermometer-half"></i>
+            <%= weather.main.temp %>&deg;C
+          </p>
 
-        <p>
-          <i class="fas fa-cloud"></i>
-          <%=weather.weather[0].main%>
-        </p>
+          <!-- Weather Status -->
+          <p id="weather-status">
+            <i class="fas fa-cloud"></i>
+            <%= weather.weather[0].main %>
+          </p>
 
-        <p>
-          <i class="fas fa-map-marker-alt"></i>
-          <%=weather.name%>, <%=weather.sys.country%>
-        </p>
-      </div>
+          <!-- City Name -->
+          <p id="weather-city">
+            <i class="fas fa-map-marker-alt"></i>
+            <%= weather.name %>, <%= weather.sys.country %>
+          </p>
+        </div>
       <% } %>
     </div>
   </body>
