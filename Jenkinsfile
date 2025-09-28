@@ -12,6 +12,7 @@ pipeline {
         DOCKER_USERNAME = credentials('dockerhub-username')  // Jenkins Secret Text
         DOCKER_PASSWORD = credentials('dockerhub-password')  // Jenkins Secret Text
         RENDER_DEPLOY_HOOK = credentials('render-hook')
+        TEST_REPO="https://github.com/rohitpadage/TestAutomation"
     }
 
     stages {
@@ -28,7 +29,8 @@ pipeline {
             }
         }
 
-        stage('Login to DockerHub') {
+
+/*        stage('Login to DockerHub') {
         steps {
             script {
                 sh """
@@ -54,12 +56,32 @@ pipeline {
         '''
     }
         }
+*/
 
         stage('Deploy to Render') {
             steps { 
                     sh 'curl -X POST "$RENDER_DEPLOY_HOOK"'
             }
         }
+
+
+        stage('Checkout Automation Tests') {
+            steps {
+                dir('automation-tests') {
+                    git branch: 'master', url: "${TEST_REPO}"
+                }
+            }
+        }
+
+        stage('Run Automation Tests') {
+            steps {
+                dir('automation-tests') {
+                    echo 'Running automation tests...'
+                    sh 'mvn clean test'
+                }
+            }
+        }
+
 
         
     }
