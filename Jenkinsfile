@@ -13,6 +13,7 @@ pipeline {
         DOCKER_PASSWORD = credentials('dockerhub-password')  // Jenkins Secret Text
         RENDER_DEPLOY_HOOK = credentials('render-hook')
         TEST_REPO="https://github.com/rohitpadage/TestAutomation"
+        TEST_FOLDER = "WebAutomation"
     }
 
     stages {
@@ -75,7 +76,7 @@ pipeline {
 
         stage('Run Automation Tests') {
             steps {
-                dir('automation-tests') {
+                dir("automation-tests/${TEST_FOLDER}") {
                     echo 'Running automation tests...'
                     sh 'mvn clean test'
                 }
